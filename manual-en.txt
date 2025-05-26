@@ -1,0 +1,197 @@
+###
+→ The English version begins here:
+
+###
+
+Information & License
+
+This manual was created by the streaming provider dos.gr and is freely available under the Creative Commons Attribution-ShareAlike 4.0 International license (CC BY-SA 4.0) . You can copy, modify, and republish it, provided that you cite the original source (dos.gr) and maintain the same license.
+
+###
+
+→ Who we are
+
+dos.gr is the first provider worldwide to publicly broadcast 1080p WebM/VP9 video via Icecast server, as evidenced by records in the Internet Archive:
+
+June 2017: Icecast WebM Directory
+June 2017: dos.gr live broadcast
+
+Our team has been active since 1996, specializing in:
+Live streaming: RTMP, HLS, Icecast, WebRTC, SRT
+File formats: MP4, M3U8, WebM, FLV
+Tools: VDO Panel, Wowza, OBS, FFmpeg, Nginx, Red5
+ABR implementation, CDN usage, low latency
+Kernel/sysctl/firewall/caching optimization
+
+→ Services
+
+We provide technical support and installation for:
+
+RTMP / HLS / Icecast streaming
+VDO Panel, Wowza, OBS, FFmpeg
+Custom panels and custom server applications
+Server optimization (BIOS, thermal, kernel-level)
+Technical support in Greece and remotely (SSH, AnyDesk)
+Website: dos.gr
+Email: webm@dos.gr
+
+→ Thank you for your interest
+
+Thank you for reading this manual. We hope you find it useful in your effort to broadcast content openly, economically, and efficiently. → We would be particularly pleased if you visited our website and explored our services.
+
+→ Who can use it & why
+
+Intended for:
+Radio stations wanting to show studio cams - Web TVs, small broadcasters - Online lessons, webinars - Surveillance cameras / science cams - Anyone with an idea without budget
+
+→ Why WebM + Icecast?
+
+No licenses/royalties (unlike Wowza, Flussonic, etc.)
+Supported by all modern browsers
+Minimal resource requirements
+Excellent image quality with low bitrate
+100% HTML5 – no Flash or plugins
+
+→ Manual summary
+
+This manual covers scheduled broadcasting of stored video files (not live) via Icecast v2. In a future manual, we will describe live streaming.
+
+→ Requirements
+
+You will need:
+
+Icecast v2.4.4 (Centova Cast on Linux)
+FFmpeg (7.1.1 on Linux for conversion)
+FFmpeg static (6.1.1 on Windows for broadcasting)
+Icecast can be local, on VPS, or at a provider, with or without a panel (e.g., Centova Cast).
+Our broadcasting is done from Windows for practical reasons.
+
+→ Advantages & Disadvantages
+
+Conversion is done once, excellent quality with small file size
+0% CPU usage during broadcast – no real-time transcoding
+Stability, ideal for low-resource systems
+
+High conversion time (e.g., 20 hours for 1-hour video with i9-9900K)
+VP9 does not fully utilize threads
+There are settings to speed up encoding (-row-mt, -tile-columns, -cpu-used)
+But quality slightly decreases
+
+→ Icecast server settings
+
+To broadcast WebM/VP9 via Icecast v2, proper configuration of icecast.xml is required.
+
+Below we provide a ready-made configuration file used in the production implementation of webm.win on Icecast v2 server (Centova Cast):
+
+Download icewebm.txt file <
+This file includes complete settings for:
+SSL streaming (HTTPS)
+video/webm mountpoint (/dos.webm)
+Directory listings for Xiph and other directories
+Proper settings for burst-size, queue, timeouts, logging, etc.
+
+You can adapt the file according to your needs.
+This implementation is fully functional and tested in real production conditions.
+
+→ Icecast settings via Centova Cast panel
+
+Below shows configuration of basic parameters via Centova Cast panel, such as:
+
+Queue size: 12800000
+Burst size: 2560000
+
+Timeout values for Source/Client
+
+These values exactly match the icecast.xml used in the production implementation on webm.win
+
+Συνημμένο αρχείο:
+
+Limits settings
+
+The image below shows basic restriction parameters, such as:
+
+Maximum Bitrate (9000 Kbps) (set high to prevent Centova from auto-stopping this stream—setting lower doesn't matter, as long as it's not lower than your video bitrate)
+
+Maximum listener number
+Disk quota & mount point limit
+
+Συνημμένο αρχείο:
+
+Mount Point settings
+
+Settings for mount point /dos.webm on Icecast, such as:
+
+MIME type: video/webm
+Advertised bitrate: 2000 kbps
+Stream name & description
+Stream URL: rdst.win:59000/dos.webm
+
+Συνημμένο αρχείο:
+
+→ Converting files to WebM/VP9
+
+For converting files to WebM/VP9, we chose the 2-pass encoding method with ffmpeg, as tests showed it achieves the best image quality relative to file size.
+
+Original videos were 4K, converted to 1920×1080 at constant 30fps.
+
+All videos used the exact same command for uniformity during broadcast and playback across browsers and devices. Audio bitrate was set to 192 kbps for excellent quality without excessive size.
+
+→ Example conversion command (2-pass VP9 WebM)
+
+ffmpeg -y -i carlcox.mp4 -vf "scale=1920:1080,fps=30" -c:v libvpx-vp9 -b:v 2000k -g 15 -deadline good -cpu-used 0 -threads 16 -pass 1 -an -f webm -passlogfile ./ffmpeg2pass temp_pass1_output.webm
+
+ffmpeg -y -i carlcox.mp4 -vf "scale=1920:1080,fps=30" -c:v libvpx-vp9 -b:v 2000k -g 15 -deadline good -cpu-used 0 -threads 16 -pass 2 -c:a libvorbis -b:a 192k -ar 44100 output_1080p_best_quality_2000k.webm
+
+→ Explanation of key parameters
+
+Parameter / Description
+-i carlcox.mp4          Original input file (MP4)
+-vf "scale=1920:1080,fps=30"    Output resolution and frame rate
+-c:v libvpx-vp9         Video codec VP9
+-b:v 2000k          Video bitrate 2000 kbps
+-g 15               Keyframe distance (GOP)—ideal for stable seeking
+-deadline good          Balance between quality and speed
+-cpu-used 0         Maximum quality (slower encoding)
+-threads 16         Using 16 CPU threads
+-pass 1 / -pass 2       First and second pass for optimized quality
+-an             Disable audio in the first pass (not needed)
+-c:a libvorbis          Vorbis codec for audio
+-b:a 192k           Audio bitrate 192 kbps
+-ar 44100           Audio frequency 44.1kHz
+-f webm             Output format WebM
+-passlogfile            File storing 1st pass information
+
+→ Playlist creation & scheduled broadcast
+
+Broadcasting is done via Windows, using a simple input.txt playlist and ffmpeg command:
+
+-re -f concat -safe 0 -i C:/Users/lyk/Desktop/ffmpegyag/videos/1080p/30fps/input.txt -c copy -f webm -cluster_size_limit 2M -cluster_time_limit 5100 -content_type video/webm icecast://source:topassmou123@rdst.win:9000/dos.webm
+
+The file input.txt contains the paths of all .webm files to be played sequentially. Example:
+
+Συνημμένο αρχείο:
+
+For greater convenience and reliability, the broadcast is run as a Windows service via FireDaemon, enabling it to start automatically, restart in case of failure, and operate in the background:
+
+Συνημμένο αρχείο:
+
+In this way, CPU usage during broadcasting remains at 0%, since no re-encoding takes place — the content is already fully prepared for streaming.
+
+The same process can be just as easily implemented on Linux, using a cron job or a systemd service script.
+
+Comment:
+It would be especially helpful if the developers of Centova Cast added built-in support for .webm playlists or playback of files via ffmpeg concat. This would allow for automatic broadcasting of scheduled WebM/VP9 content directly from the panel — just like it already works with MP3.
+
+→ Final Notes
+This manual provides a step-by-step guide for the entire process:
+from file conversion and Icecast configuration to scheduled broadcasting in a production environment.
+
+From this point on... explore a little on your own!
+The internet is full of examples, technical articles, and of course... DeepSeek/ChatGPT, which can help you experiment further — especially with custom setups, automation, or HTML integration.
+
+If you need professional support, we’re here:
+dos.gr | webm@dos.gr
+
+---
+
+→ Archived at 26.May.2025: Internet Archive (Wayback Machine) - Zenodo (DOI) - Licensed under CC BY-SA 4.0
