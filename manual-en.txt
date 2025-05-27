@@ -1,8 +1,3 @@
-###
-→ The English version begins here:
-
-###
-
 Information & License
 
 This manual was created by the streaming provider dos.gr and is freely available under the Creative Commons Attribution-ShareAlike 4.0 International license (CC BY-SA 4.0) . You can copy, modify, and republish it, provided that you cite the original source (dos.gr) and maintain the same license.
@@ -144,22 +139,22 @@ ffmpeg -y -i carlcox.mp4 -vf "scale=1920:1080,fps=30" -c:v libvpx-vp9 -b:v 2000k
 
 → Explanation of key parameters
 
-Parameter / Description
--i carlcox.mp4          Original input file (MP4)
--vf "scale=1920:1080,fps=30"    Output resolution and frame rate
--c:v libvpx-vp9         Video codec VP9
--b:v 2000k          Video bitrate 2000 kbps
--g 15               Keyframe distance (GOP)—ideal for stable seeking
--deadline good          Balance between quality and speed
--cpu-used 0         Maximum quality (slower encoding)
--threads 16         Using 16 CPU threads
--pass 1 / -pass 2       First and second pass for optimized quality
--an             Disable audio in the first pass (not needed)
--c:a libvorbis          Vorbis codec for audio
--b:a 192k           Audio bitrate 192 kbps
--ar 44100           Audio frequency 44.1kHz
--f webm             Output format WebM
--passlogfile            File storing 1st pass information
+Parameter                     Description
+-i carlcox.mp4                Original input file (MP4)
+-vf "scale=1920:1080,fps=30"  Output resolution and frame rate
+-c:v libvpx-vp9               Video codec VP9
+-b:v 2000k                    Video bitrate 2000 kbps
+-g 15                         Keyframe distance (GOP)—ideal for stable seeking
+-deadline good                Balance between quality and speed
+-cpu-used 0                   Maximum quality (slower encoding)
+-threads 16                   Using 16 CPU threads
+-pass 1 / -pass 2             First and second pass for optimized quality
+-an                           Disable audio in the first pass (not needed)
+-c:a libvorbis                Vorbis codec for audio
+-b:a 192k                     Audio bitrate 192 kbps
+-ar 44100                     Audio frequency 44.1kHz
+-f webm                       Output format WebM
+-passlogfile                  File storing 1st pass information
 
 → Playlist creation & scheduled broadcast
 
