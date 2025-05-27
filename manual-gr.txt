@@ -141,22 +141,22 @@ ffmpeg -y -i carlcox.mp4 -vf "scale=1920:1080,fps=30" -c:v libvpx-vp9 -b:v 2000k
 
 → Επεξήγηση βασικών παραμέτρων
 
-Παράμετρος / Περιγραφή  
--i carlcox.mp4          Το αρχικό αρχείο εισόδου (MP4)  
--vf "scale=1920:1080,fps=30"    Ορισμός ανάλυσης εξόδου και ρυθμός καρέ  
--c:v libvpx-vp9         Video codec VP9  
--b:v 2000k          Bitrate video 2000 kbps  
--g 15               Απόσταση μεταξύ keyframes (GOP)—ιδανικό για σταθερό seeking  
--deadline good          Ισορροπία μεταξύ ποιότητας και ταχύτητας  
--cpu-used 0         Μέγιστη ποιότητα (πιο αργή κωδικοποίηση)  
--threads 16         Χρήση 16 CPU threads  
--pass 1 / -pass 2       Πρώτο και δεύτερο πέρασμα για βελτιστοποιημένη ποιότητα  
--an             Απενεργοποίηση ήχου στο πρώτο πέρασμα (δεν χρειάζεται)  
--c:a libvorbis          Vorbis codec ήχου  
--b:a 192k           Bitrate ήχου 192 kbps  
--ar 44100           Συχνότητα ήχου 44.1kHz  
--f webm             Format εξόδου WebM  
--passlogfile            Αρχείο καταγραφής pass
+Παράμετρος                      Περιγραφή
+-i carlcox.mp4                  Το αρχικό αρχείο εισόδου (MP4)
+-vf "scale=1920:1080,fps=30"    Ορισμός ανάλυσης εξόδου και ρυθμός καρέ
+-c:v libvpx-vp9                 Video codec VP9
+-b:v 2000k                      Bitrate video 2000 kbps
+-g 15                           Απόσταση μεταξύ keyframes (GOP)—ιδανικό για σταθερό seeking
+-deadline good                  Ισορροπία μεταξύ ποιότητας και ταχύτητας
+-cpu-used 0                     Μέγιστη ποιότητα (πιο αργή κωδικοποίηση)
+-threads 16                     Χρήση 16 CPU threads
+-pass 1 / -pass 2               Πρώτο και δεύτερο πέρασμα για βελτιστοποιημένη ποιότητα
+-an                             Απενεργοποίηση ήχου στο πρώτο πέρασμα (δεν χρειάζεται)
+-c:a libvorbis                  Vorbis codec ήχου
+-b:a 192k                       Bitrate ήχου 192 kbps
+-ar 44100                       Συχνότητα ήχου 44.1kHz
+-f webm                         Format εξόδου WebM
+-passlogfile                    Αρχείο καταγραφής pass
 
 → Δημιουργία Playlist και Προγραμματισμένη Εκπομπή
 
